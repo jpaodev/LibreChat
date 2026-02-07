@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const { ProxyAgent, fetch } = require('undici');
 const { Tool } = require('@langchain/core/tools');
 const { logger } = require('@librechat/data-schemas');
-const { getImageBasename, extractBaseURL } = require('@librechat/api');
+const { getImageBasename, extractBaseURL, shouldProxy } = require('@librechat/api');
 const { FileContext, ContentTypes } = require('librechat-data-provider');
 
 const dalle3JsonSchema = {
@@ -72,7 +72,7 @@ class DALLE3 extends Tool {
       config.apiKey = process.env.DALLE3_API_KEY;
     }
 
-    if (process.env.PROXY) {
+    if (process.env.PROXY && shouldProxy(config.baseURL)) {
       const proxyAgent = new ProxyAgent(process.env.PROXY);
       config.fetchOptions = {
         dispatcher: proxyAgent,
@@ -176,7 +176,7 @@ Error Message: ${error.message}`);
 
     if (this.isAgent) {
       let fetchOptions = {};
-      if (process.env.PROXY) {
+      if (process.env.PROXY && shouldProxy(theImageUrl)) {
         const proxyAgent = new ProxyAgent(process.env.PROXY);
         fetchOptions.dispatcher = proxyAgent;
       }

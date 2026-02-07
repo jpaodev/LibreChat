@@ -3,6 +3,7 @@ import * as path from 'path';
 import FormData from 'form-data';
 import { logger } from '@librechat/data-schemas';
 import { HttpsProxyAgent } from 'https-proxy-agent';
+import { shouldProxy } from '~/utils/proxy';
 import {
   FileSources,
   envVarRegex,
@@ -88,7 +89,7 @@ export async function uploadDocumentToMistral({
     maxContentLength: Infinity,
   };
 
-  if (process.env.PROXY) {
+  if (process.env.PROXY && shouldProxy(baseURL)) {
     config.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
   }
 
@@ -117,7 +118,7 @@ export async function getSignedUrl({
     },
   };
 
-  if (process.env.PROXY) {
+  if (process.env.PROXY && shouldProxy(baseURL)) {
     config.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
   }
 
@@ -161,7 +162,7 @@ export async function performOCR({
     },
   };
 
-  if (process.env.PROXY) {
+  if (process.env.PROXY && shouldProxy(baseURL)) {
     config.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
   }
 
@@ -209,7 +210,7 @@ export async function deleteMistralFile({
     },
   };
 
-  if (process.env.PROXY) {
+  if (process.env.PROXY && shouldProxy(baseURL)) {
     config.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
   }
 
@@ -578,7 +579,7 @@ async function exchangeJWTForAccessToken(jwt: string): Promise<string> {
     },
   };
 
-  if (process.env.PROXY) {
+  if (process.env.PROXY && shouldProxy('https://oauth2.googleapis.com')) {
     config.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
   }
 
@@ -651,7 +652,7 @@ async function performGoogleVertexOCR({
     },
   };
 
-  if (process.env.PROXY) {
+  if (process.env.PROXY && shouldProxy(baseURL)) {
     config.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
   }
 

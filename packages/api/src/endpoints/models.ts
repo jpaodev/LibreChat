@@ -11,6 +11,7 @@ import {
   deriveBaseURL,
   logAxiosError,
   inputSchema,
+  shouldProxy,
 } from '~/utils';
 import { standardCache } from '~/cache';
 
@@ -147,7 +148,7 @@ export async function fetchModels({
       options.headers.Authorization = `Bearer ${apiKey}`;
     }
 
-    if (process.env.PROXY) {
+    if (process.env.PROXY && shouldProxy(baseURL)) {
       options.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
     }
 
