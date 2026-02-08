@@ -16,7 +16,7 @@ import type {
   GuardrailConfiguration,
   InferenceProfileConfig,
 } from '~/types';
-import { checkUserKeyExpiry } from '~/utils';
+import { checkUserKeyExpiry, shouldProxy } from '~/utils';
 
 /**
  * Initializes Bedrock endpoint configuration.
@@ -137,7 +137,7 @@ export async function initializeBedrock({
     typeof credentials.secretAccessKey === 'string' &&
     credentials.secretAccessKey !== '';
 
-  if (PROXY) {
+  if (PROXY && shouldProxy(BEDROCK_REVERSE_PROXY ? `https://${BEDROCK_REVERSE_PROXY}` : undefined)) {
     const proxyAgent = new HttpsProxyAgent(PROXY);
 
     // Create a custom BedrockRuntimeClient with proxy-enabled request handler.

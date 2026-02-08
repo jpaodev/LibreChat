@@ -8,6 +8,7 @@ import { getGoogleConfig } from '~/endpoints/google/llm';
 import { transformToOpenAIConfig } from './transform';
 import { constructAzureURL } from '~/utils/azure';
 import { createFetch } from '~/utils/generators';
+import { shouldProxy } from '~/utils/proxy';
 
 type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
@@ -138,7 +139,7 @@ export function getOpenAIConfig(
     configOptions.defaultQuery = defaultQuery;
   }
 
-  if (proxy) {
+  if (proxy && shouldProxy(baseURL)) {
     const proxyAgent = new ProxyAgent(proxy);
     configOptions.fetchOptions = {
       dispatcher: proxyAgent,

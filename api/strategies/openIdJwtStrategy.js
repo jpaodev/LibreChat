@@ -3,7 +3,7 @@ const jwksRsa = require('jwks-rsa');
 const { logger } = require('@librechat/data-schemas');
 const { HttpsProxyAgent } = require('https-proxy-agent');
 const { SystemRoles } = require('librechat-data-provider');
-const { isEnabled, findOpenIDUser, math } = require('@librechat/api');
+const { isEnabled, findOpenIDUser, math, shouldProxy } = require('@librechat/api');
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const { updateUser, findUser } = require('~/models');
 
@@ -31,7 +31,7 @@ const openIdJwtLogin = (openIdConfig) => {
     jwksUri: openIdConfig.serverMetadata().jwks_uri,
   };
 
-  if (process.env.PROXY) {
+  if (process.env.PROXY && shouldProxy(jwksRsaOptions.jwksUri)) {
     jwksRsaOptions.requestAgent = new HttpsProxyAgent(process.env.PROXY);
   }
 

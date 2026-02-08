@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { logger } = require('@librechat/data-schemas');
 const { HttpsProxyAgent } = require('https-proxy-agent');
+const { shouldProxy } = require('@librechat/api');
 const { genAzureEndpoint, logAxiosError } = require('@librechat/api');
 const { extractEnvVariable, TTSProviders } = require('librechat-data-provider');
 const { getRandomVoiceId, createChunkProcessor, splitTextIntoChunks } = require('./streamAudio');
@@ -267,7 +268,7 @@ class TTSService {
 
     const options = { headers, responseType: stream ? 'stream' : 'arraybuffer' };
 
-    if (process.env.PROXY) {
+    if (process.env.PROXY && shouldProxy(url)) {
       options.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
     }
 

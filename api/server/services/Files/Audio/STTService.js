@@ -4,6 +4,7 @@ const FormData = require('form-data');
 const { Readable } = require('stream');
 const { logger } = require('@librechat/data-schemas');
 const { HttpsProxyAgent } = require('https-proxy-agent');
+const { shouldProxy } = require('@librechat/api');
 const { genAzureEndpoint, logAxiosError } = require('@librechat/api');
 const { extractEnvVariable, STTProviders } = require('librechat-data-provider');
 const { getAppConfig } = require('~/server/services/Config');
@@ -295,7 +296,7 @@ class STTService {
 
     const options = { headers };
 
-    if (process.env.PROXY) {
+    if (process.env.PROXY && shouldProxy(url)) {
       options.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
     }
 

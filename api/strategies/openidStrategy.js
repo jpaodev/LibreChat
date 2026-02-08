@@ -15,6 +15,7 @@ const {
   findOpenIDUser,
   getBalanceConfig,
   isEmailDomainAllowed,
+  shouldProxy,
 } = require('@librechat/api');
 const { getStrategyFunctions } = require('~/server/services/Files/strategies');
 const { findUser, createUser, updateUser } = require('~/models');
@@ -53,7 +54,7 @@ async function customFetch(url, options) {
   try {
     /** @type {undici.RequestInit} */
     let fetchOptions = options;
-    if (process.env.PROXY) {
+    if (process.env.PROXY && shouldProxy(url.toString())) {
       logger.info(`[openidStrategy] proxy agent configured: ${process.env.PROXY}`);
       fetchOptions = {
         ...options,
@@ -217,7 +218,7 @@ const downloadImage = async (url, config, accessToken, sub) => {
       },
     };
 
-    if (process.env.PROXY) {
+    if (process.env.PROXY && shouldProxy(url)) {
       options.agent = new HttpsProxyAgent(process.env.PROXY);
     }
 

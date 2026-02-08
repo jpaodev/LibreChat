@@ -1,4 +1,5 @@
 import { Dispatcher, ProxyAgent } from 'undici';
+import { shouldProxy } from '~/utils/proxy';
 import { logger } from '@librechat/data-schemas';
 import { AnthropicClientOptions } from '@librechat/agents';
 import { anthropicSettings, removeNullishValues, AuthKeys } from 'librechat-data-provider';
@@ -193,7 +194,7 @@ function getLLMConfig(
     requestOptions.clientOptions.defaultHeaders = headers;
   }
 
-  if (options.proxy && requestOptions.clientOptions) {
+  if (options.proxy && shouldProxy(options.reverseProxyUrl) && requestOptions.clientOptions) {
     const proxyAgent = new ProxyAgent(options.proxy);
     requestOptions.clientOptions.fetchOptions = {
       dispatcher: proxyAgent,

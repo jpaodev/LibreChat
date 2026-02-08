@@ -17,6 +17,7 @@ const {
   loadServiceKey,
   getBalanceConfig,
   getTransactionsConfig,
+  shouldProxy,
 } = require('@librechat/api');
 const { getStrategyFunctions } = require('~/server/services/Files/strategies');
 const { spendTokens } = require('~/models/spendTokens');
@@ -33,7 +34,7 @@ if (process.env.PROXY) {
 
   globalThis.fetch = function (url, options = {}) {
     const urlString = url.toString();
-    if (urlString.includes('googleapis.com')) {
+    if (urlString.includes('googleapis.com') && shouldProxy(urlString)) {
       options = { ...options, dispatcher: proxyAgent };
     }
     return originalFetch.call(this, url, options);

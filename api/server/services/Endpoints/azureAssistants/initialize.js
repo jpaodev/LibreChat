@@ -5,6 +5,7 @@ const {
   resolveHeaders,
   constructAzureURL,
   checkUserKeyExpiry,
+  shouldProxy,
 } = require('@librechat/api');
 const { ErrorTypes, EModelEndpoint, mapModelToAzureConfig } = require('librechat-data-provider');
 const { getUserKeyValues, getUserKeyExpiry } = require('~/models');
@@ -157,7 +158,7 @@ const initializeClient = async ({ req, res, version, endpointOption, initAppClie
     opts.baseURL = baseURL;
   }
 
-  if (PROXY) {
+  if (PROXY && shouldProxy(baseURL)) {
     const proxyAgent = new ProxyAgent(PROXY);
     opts.fetchOptions = {
       dispatcher: proxyAgent,
