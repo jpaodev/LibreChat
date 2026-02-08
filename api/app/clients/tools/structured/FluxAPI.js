@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const { Tool } = require('@langchain/core/tools');
 const { logger } = require('@librechat/data-schemas');
 const { HttpsProxyAgent } = require('https-proxy-agent');
+const { shouldProxy } = require('@librechat/api');
 const { FileContext, ContentTypes } = require('librechat-data-provider');
 
 const fluxApiJsonSchema = {
@@ -143,7 +144,7 @@ class FluxAPI extends Tool {
 
   getAxiosConfig() {
     const config = {};
-    if (process.env.PROXY) {
+    if (process.env.PROXY && shouldProxy(this.baseUrl)) {
       config.httpsAgent = new HttpsProxyAgent(process.env.PROXY);
     }
     return config;
@@ -300,7 +301,7 @@ class FluxAPI extends Tool {
       try {
         // Fetch the image and convert to base64
         const fetchOptions = {};
-        if (process.env.PROXY) {
+        if (process.env.PROXY && shouldProxy(imageUrl)) {
           fetchOptions.agent = new HttpsProxyAgent(process.env.PROXY);
         }
         const imageResponse = await fetch(imageUrl, fetchOptions);
